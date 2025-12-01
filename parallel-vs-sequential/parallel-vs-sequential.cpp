@@ -19,6 +19,5 @@ int main()
 
 	generateArray(arr, N);
 
-
 }
 
