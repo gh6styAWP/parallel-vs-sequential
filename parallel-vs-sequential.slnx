@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="parallel-vs-sequential/parallel-vs-sequential.vcxproj" />
+  <Project Path="parallel-vs-sequential/parallel-vs-sequential.vcxproj" Id="174ac6f2-95c5-4bed-a344-e1954df1a24f" />
 </Solution>
