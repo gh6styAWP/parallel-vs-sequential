@@ -1,4 +1,6 @@
 ﻿#include <iostream>
+#include <thread>
+#include <chrono>
 using namespace std;
 
 
@@ -16,14 +18,22 @@ int main()
 
 	int value = rand() % 100001; //присваиваем случайный индекс
 	int temp = arr[value];
-
-	//ищем поввторяющиеся значения в массиве
+	
+	//начинаем отсчёт
+	auto start = chrono::steady_clock::now();
+	//ищем повторяющиеся значения в массиве
 	for (int i = 0; i < N; i++)
 	{
 		if(arr[i] == temp)
 			count++;
 	}
-	cout << count;
+	//заканчиваем отсчёт
+	auto end = chrono::steady_clock::now();
+	chrono::duration<double> elapsed = end - start;
+	cout << "\nвремя выполнения: " << elapsed.count() << " секунд";
+	cout << "\nповторяющихся чисел: " << count;
+
+	
 
 }
 
