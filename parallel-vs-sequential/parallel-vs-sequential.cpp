@@ -16,39 +16,72 @@ void count_segment(const vector<int>& arr, int value, size_t begin, size_t end, 
 
 int main()
 {
-	setlocale(LC_ALL, "Russian");
-	const int N = 100000000;
-	vector<int> arr(N);
+	setlocale(LC_ALL, "Ru");
 	int count = 0;
+	const int N = 900000000;
+	vector<int> arr(N);
 
-	//заполняем массив случайными числами от 0 до 100
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < N; i++) //заполняем массив случайными числами от 0 до 100
 		arr[i] = rand() % 101;
 
 	int value = rand() % N; //присваиваем случайный индекс
 	int temp = arr[value];
 	
-	//начинаем отсчёт
-	auto start = chrono::steady_clock::now();
+	auto start = chrono::steady_clock::now(); //начинаем отсчёт
 
-	//ищем повторяющиеся значения в массиве
-	for (int i = 0; i < N; i++)
-	{
+	for (int i = 0; i < N; i++) //ищем повторяющиеся значения в массиве	
 		if(arr[i] == temp)
-			count++;
-	}
+			count++;	
 
-	//заканчиваем отсчёт
-	auto end = chrono::steady_clock::now();
+	auto end = chrono::steady_clock::now(); //заканчиваем отсчёт
 	chrono::duration<double> elapsed = end - start;
+
 	cout << "\nвремя выполнения: " << elapsed.count() << " секунд";
 	cout << "\nповторяющихся чисел: " << count;
 
-	cout << "\n";
 	int num_threads = thread::hardware_concurrency();
-	cout << num_threads;
+	if (num_threads == 0) num_threads = 4; //на всякий случай
+	cout << "\nпотоков: " << num_threads;
 
+	vector<thread> threads;
+	vector<long long> partial_counts(num_threads);
 
+	start = chrono::steady_clock::now(); //начинаем отсчёт
+
+	size_t block = N / num_threads;
+	size_t begin = 0;
+
+	for (unsigned int t = 0; t < num_threads; ++t) {
+		size_t end_index = (t == num_threads - 1)
+			? N                //последний до конца массива
+			: begin + block;   //обычный кусок
+
+		threads.emplace_back(
+			count_segment,
+			cref(arr),       //массив по константной ссылке
+			value,
+			begin,
+			end_index,
+			ref(partial_counts[t]) //результат этого потока
+		);
+
+		begin = end_index;
+	}
+
+	for (auto& th : threads) //ждём окончания всех потоков
+		th.join();
+
+	
+	long long count_par = 0; //суммируем результаты
+	for (auto c : partial_counts)
+		count_par += c;
+
+	end = chrono::steady_clock::now();
+	chrono::duration<double> elapsed_par = end - start;
+
+	cout << "\nПараллельный:\n";
+	cout << "  время: " << elapsed_par.count() << " сек\n";
+	cout << "  количество: " << count_par << "\n";
 
 }
 
