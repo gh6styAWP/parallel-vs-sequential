@@ -1,14 +1,23 @@
 ﻿#include <iostream>
 #include <thread>
 #include <chrono>
+#include <vector>
 using namespace std;
 
+//функция подсчёта для каждого потока
+void count_segment(const vector<int>& arr, int value, size_t begin, size_t end, long long& out_count) {
+	long long c = 0;
+	for (size_t i = begin; i < end; ++i) 
+		if (arr[i] == value)
+			++c;
+	out_count = c;
+}
 
 
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	const int N = 900000000;
+	const int N = 100000000;
 	vector<int> arr(N);
 	int count = 0;
 
@@ -16,7 +25,7 @@ int main()
 	for (int i = 0; i < N; i++)
 		arr[i] = rand() % 101;
 
-	int value = rand() % 101; //присваиваем случайный индекс
+	int value = rand() % N; //присваиваем случайный индекс
 	int temp = arr[value];
 	
 	//начинаем отсчёт
