@@ -13,12 +13,11 @@ void count_segment(const vector<int>& arr, int value, size_t begin, size_t end, 
 	out_count = c;
 }
 
-
 int main()
 {
 	setlocale(LC_ALL, "Ru");
 	int count = 0;
-	const int N = 900000000;
+	const size_t N = 900000000;
 	vector<int> arr(N);
 
 	for (int i = 0; i < N; i++) //заполняем массив случайными числами от 0 до 100
@@ -36,12 +35,13 @@ int main()
 	auto end = chrono::steady_clock::now(); //заканчиваем отсчёт
 	chrono::duration<double> elapsed = end - start;
 
-	cout << "\nвремя выполнения: " << elapsed.count() << " секунд";
-	cout << "\nповторяющихся чисел: " << count;
+	cout << "-- последовательный вариант --";
+	cout << "\n\n\tвремя выполнения алгоритма: " << elapsed.count() << " секунд";
+	cout << "\n\tповторяющихся чисел: " << count;
 
 	int num_threads = thread::hardware_concurrency();
 	if (num_threads == 0) num_threads = 4; //на всякий случай
-	cout << "\nпотоков: " << num_threads;
+	cout << "\n\nкол-во потоков: " << num_threads;
 
 	vector<thread> threads;
 	vector<long long> partial_counts(num_threads);
@@ -58,8 +58,8 @@ int main()
 
 		threads.emplace_back(
 			count_segment,
-			cref(arr),       //массив по константной ссылке
-			value,
+			cref(arr), //массив по константной ссылке
+			temp,
 			begin,
 			end_index,
 			ref(partial_counts[t]) //результат этого потока
@@ -79,9 +79,9 @@ int main()
 	end = chrono::steady_clock::now();
 	chrono::duration<double> elapsed_par = end - start;
 
-	cout << "\nПараллельный:\n";
-	cout << "  время: " << elapsed_par.count() << " сек\n";
-	cout << "  количество: " << count_par << "\n";
+	cout << "\n\n-- параллельный вариант --\n";
+	cout << "\n\tвремя выполнения алгоритма: " << elapsed_par.count();
+	cout << "\n\tповторяющихся чисел: " << count_par << "\n";
 
 }
 
